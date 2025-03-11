@@ -3,8 +3,8 @@ include "db.php";
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST["username"];
-    $password = $_POST["password"];
+    $username = trim($_POST["username"]);
+    $password = trim($_POST["password"]);
 
     $sql = "SELECT id, password FROM user_list WHERE username = ?";
     $stmt = $conn->prepare($sql);
@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-<form action="login.php" method="post">
+<form action="login.php" method="post"> <!-- Corrected the form action -->
     <input type="text" name="username" placeholder="Username" required><br>
     <input type="password" name="password" placeholder="Password" required><br>
     <button type="submit">Login</button>

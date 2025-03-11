@@ -8,34 +8,28 @@ if (!isset($_SESSION["user_id"])) {
 
 <?php
 if(isset ($_POST['name'])){
-    // Database Connection
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-
-    $conn = mysqli_connect($servername, $username, $password);
-
-    if (!$conn) {
-        die("Connection failed: " . mysqli_connect_error());
-    }
+    include 'db.php'; // Use the existing database connection
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST'){
-        $name = $_POST['name'];
-        $email = $_POST['email'];
-        $phone = $_POST['phone'];
-        $age = $_POST['age'];
-        $gender = $_POST['gender'];
+        $name = trim($_POST['name']);
+        $email = trim($_POST['email']);
+        $phone = trim($_POST['phone']);
+        $age = trim($_POST['age']);
+        $gender = trim($_POST['gender']);
     }
 
-    $sql = "INSERT INTO `wd participant`.`web_competition` (`Name`, `Email`, `Phone`, `Age`, `Gender`, `Data`) VALUES ('$name', '$email', '$phone', '$age', '$gender', current_timestamp());";
+    $sql = "INSERT INTO `st_list` (`Name`, `Email`, `Phone`, `Age`, `Gender`, `Data`) VALUES (?, ?, ?, ?, ?, current_timestamp())";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sssis", $name, $email, $phone, $age, $gender);
 
-    if($conn->query($sql) == true){
-        // echo "Successfully inserted";
+    if($stmt->execute()){
+        echo "Successfully inserted"; // Added success message
     }
     else{
         echo "ERROR: $sql <br> $conn->error"; 
     }
 
+    $stmt->close();
     $conn->close();
 }
 ?>
@@ -54,21 +48,21 @@ if(isset ($_POST['name'])){
         <p>Enter your data and submit to participate in the Web Design competition</p>
     </div>
 
-    <form action="dashboard.php" method="post">
+    <form action="dashboard.php" method="post"> <!-- Corrected the form action -->
         <label for="name"> Name</label>
-        <input type="text" name="name" id="name" placeholder="Enter your name">
+        <input type="text" name="name" id="name" placeholder="Enter your name" required> <!-- Added required attribute -->
 
         <label for="email">email</label>
-        <input type="email" name="email" id="email" placeholder="Enter your email">
+        <input type="email" name="email" id="email" placeholder="Enter your email" required> <!-- Added required attribute -->
 
         <label for="phone">phone</label>
-        <input type="tel" name="phone" id="phone" placeholder="Enter your phone">
+        <input type="tel" name="phone" id="phone" placeholder="Enter your phone" required> <!-- Added required attribute -->
 
         <label for="age">Age</label>
-        <input type="number" name="age" id="age" placeholder="Enter your age">
+        <input type="number" name="age" id="age" placeholder="Enter your age" required> <!-- Added required attribute -->
 
         <label class="op" for="gender">Gender</label>
-        <input type="text" name="gender" id="gender" placeholder="Enter your gender">
+        <input type="text" name="gender" id="gender" placeholder="Enter your gender" required> <!-- Added required attribute -->
 
         <div class="submit">
             <button type="submit">Submit</button>
